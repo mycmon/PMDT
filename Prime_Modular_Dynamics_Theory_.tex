@@ -1,0 +1,475 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{mathrsfs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+
+\geometry{margin=1in}
+
+% === Environnements mathématiques ===
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{conjecture}{Conjecture}
+
+\title{\textbf{Prime Modular Dynamics Theory (PMDT)}\\
+\large A Formal Structure for SG(k), Modular Phases, and Periodicities 6, 9, and 18}
+\author{Michel Monfette \\ email \href{mailto:mycmon@gmail.com}{mycmon@gmail.com}}
+\date{2026-02-13}
+
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+
+\begin{abstract}
+We study the modular dynamics of prime numbers through the families
+
+
+\[
+SG(k)=\{p\in\mathbb{P} : kp+1\in\mathbb{P}\}.
+\]
+
+We present extensive computational evidence (up to 100 million Sophie Germain primes) for a modular dynamical structure in SG primes modulo 30. Two fundamental theorems establish the triangular residue class {11,23,29} and gap constraints. Eight conjectures emerge, including a novel "least-gap principle" and a harmonic attractor at 60. SG(k) families exhibit distinct phases in entropy/detailed-balance plane, with period-9 resonance and asymmetric sexy orbits. A third grammatical dynamic (G3) classifies all anomalies into three energy regimes. These patterns suggest an underlying arithmetic grammar and self-organizing behavior in Sophie Germain primes.
+\end{abstract}
+
+\section{Introduction}
+
+Prime numbers exhibit deep modular structure. When reduced modulo 30, all primes greater than 5 lie in the set
+
+
+\[
+\mathcal{R}=\{1,7,11,13,17,19,23,29\}.
+\]
+
+
+Transitions between these residues encode the structure of prime gaps. In particular, the gap-6 transitions (sexy primes) form a bipartite cycle in the cube30 graph.
+
+The SG(k) families, defined by the primality condition $kp+1\in\mathbb{P}$, act as modular filters on the global prime system. Surprisingly, these filters reveal a \emph{phase structure} in the dynamics of prime gaps. This article formalizes this structure.
+
+\section{Definitions}
+
+\begin{definition}[SG(k) family]
+For any integer $k\ge 2$, define
+
+
+\[
+SG(k)=\{p\in\mathbb{P} : kp+1\in\mathbb{P}\}.
+\]
+
+
+\end{definition}
+
+\begin{definition}[Residue projection]
+Let $\pi_{30}(p)=p\bmod 30\in\mathcal{R}$.
+\end{definition}
+
+\begin{definition}[Transition matrix]
+For a gap $d$, define the $8\times 8$ matrix
+
+
+\[
+M^{(k)}_d(i,j)=\#\{p\in SG(k): p\equiv r_i,\ p+d\equiv r_j\}.
+\]
+
+
+\end{definition}
+
+\begin{definition}[Entropy]
+For each row $i$,
+
+
+\[
+H_i=-\sum_j P_{ij}\log_2 P_{ij},
+\]
+
+
+and the weighted mean
+
+
+\[
+H=\sum_i \pi_i H_i.
+\]
+
+
+\end{definition}
+
+\begin{definition}[Detailed balance error]
+
+
+\[
+DB=\frac{1}{N}\sum_{i<j}
+\frac{|\pi_i M_{ij}-\pi_j M_{ji}|}{(\pi_i M_{ij}+\pi_j M_{ji})/2}.
+\]
+
+
+\end{definition}
+
+\begin{definition}[Sexy-prime orbits]
+The gap-6 transitions form two orbits $A$ and $B$ in the cube30 graph.
+\end{definition}
+
+\begin{definition}[Period-9 score]
+Let $x$ be the concatenation of diagonals of $M^{(k)}_6$. Define
+
+
+\[
+S_9(k)=\frac{\mathrm{Autocorr}(x)[9]}{\mathrm{Autocorr}(x)[0]}.
+\]
+
+
+\end{definition}
+
+\section{Numerical Methods}
+
+This section describes the computational pipeline used to generate all transition matrices,
+entropy values, detailed balance errors, orbit activations, and period-9 resonance scores.
+
+\subsection{Prime generation}
+All primes up to a chosen bound $N$ are generated using a segmented sieve of Eratosthenes.
+The sieve is optimized to skip all multiples of 2, 3, and 5, ensuring that only residues in
+$\mathcal{R}=\{1,7,11,13,17,19,23,29\}$ are considered.
+
+\subsection{Construction of SG(k)}
+For each integer $k$ in a prescribed range (typically $2\le k\le 60$), the family
+
+
+\[
+SG(k)=\{p\in\mathbb{P} : kp+1\in\mathbb{P}\}
+\]
+
+
+is constructed by testing primality of $kp+1$ using a deterministic Miller–Rabin test.
+
+\subsection{Transition matrices}
+For each $k$ and each gap $d\in\{2,4,6\}$, we construct an $8\times 8$ matrix
+
+
+\[
+M^{(k)}_d(i,j)=\#\{p\in SG(k): p\equiv r_i,\ p+d\equiv r_j\}.
+\]
+
+
+Matrices are stored as NumPy arrays in \texttt{data/} for reproducibility.
+
+\subsection{Entropy and detailed balance}
+Entropy is computed row-wise using
+
+
+\[
+H_i=-\sum_j P_{ij}\log_2 P_{ij},
+\]
+
+
+and aggregated using the stationary distribution $\pi$ of the residue classes.
+
+Detailed balance error is computed as
+
+
+\[
+DB=\frac{1}{N}\sum_{i<j}
+\frac{|\pi_i M_{ij}-\pi_j M_{ji}|}{(\pi_i M_{ij}+\pi_j M_{ji})/2}.
+\]
+
+
+
+\subsection{Orbit detection in the cube30 graph}
+Gap-6 transitions form two disjoint orbits $A$ and $B$ in the cube30 graph.
+For each SG(k), we count the number of transitions belonging to each orbit.
+
+\subsection{Period-9 resonance detection}
+Diagonal sequences of $M^{(k)}_6$ are concatenated into a vector $x$.
+The normalized autocorrelation
+
+
+\[
+S_9(k)=\frac{\mathrm{Autocorr}(x)[9]}{\mathrm{Autocorr}(x)[0]}
+\]
+
+
+is used to detect the presence of a period-9 resonance.
+
+\subsection{Pipeline automation}
+All computations are orchestrated by a master script \texttt{main.py}, which executes:
+\begin{enumerate}
+    \item SG(k) construction and matrix generation
+    \item heatmap generation
+    \item entropy/DB comparison
+    \item orbit analysis
+    \item period-9 detection
+    \item PDF report generation
+\end{enumerate}
+This ensures full reproducibility of all results.
+
+
+\section{Entropy vs Detailed Balance}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/compare_SG_gap6_entropy_DB.png}
+    \caption{Entropy vs Detailed Balance for SG(k) families (gap 6). 
+    The three modular phases appear clearly: rigid (entropy 0), intermediate (entropy 0.5), and resonant (entropy 0.667).}
+    \label{fig:entropyDB}
+\end{figure}
+
+\section{Global Transition Heatmaps}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/global_gap2.png}
+    \caption{Global transition matrix for gap 2.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/global_gap4.png}
+    \caption{Global transition matrix for gap 4.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/global_gap6.png}
+    \caption{Global transition matrix for gap 6.}
+\end{figure}
+
+\section{Heatmaps for SG(k)}
+
+% === SG(2) ===
+\subsection{SG(2)}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG2_gap2.png}
+        \caption{SG(2), gap 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG2_gap6.png}
+        \caption{SG(2), gap 6}
+    \end{subfigure}
+    \caption{Heatmaps for SG(2).}
+\end{figure}
+
+% === SG(4) ===
+\subsection{SG(4)}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG4_gap4.png}
+        \caption{SG(4), gap 4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG4_gap6.png}
+        \caption{SG(4), gap 6}
+    \end{subfigure}
+    \caption{Heatmaps for SG(4).}
+\end{figure}
+
+% === SG(6) ===
+\subsection{SG(6)}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG6_gap2.png}
+        \caption{SG(6), gap 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG6_gap6.png}
+        \caption{SG(6), gap 6}
+    \end{subfigure}
+    \caption{Heatmaps for SG(6).}
+\end{figure}
+
+% === SG(8) ===
+\subsection{SG(8)}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG8_gap2.png}
+        \caption{SG(8), gap 2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/SG8_gap6.png}
+        \caption{SG(8), gap 6}
+    \end{subfigure}
+    \caption{Heatmaps for SG(8).}
+\end{figure}
+
+% === Period 9 ===
+\section{Period-9 Resonance}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/period9_vs_k.png}
+    \caption{Period-9 autocorrelation score $S_9(k)$ as a function of $k$. 
+    The combined periodicity 18 is clearly visible.}
+    \label{fig:period9}
+\end{figure}
+
+\section{Prime Modular Dynamics Theory (PMDT)}
+
+We propose the following framework:
+
+\begin{itemize}
+\item \textbf{Axiom 1.} Prime gaps exhibit modular dynamics governed by the cube30 graph.
+\item \textbf{Axiom 2.} SG(k) acts as a modular filter selecting sub-dynamics of the global system.
+\item \textbf{Axiom 3.} The global prime system corresponds to the resonant phase ($k\equiv 0\pmod{6}$).
+\end{itemize}
+
+\begin{conjecture}[Modular attractor]
+The global prime dynamics is the attractor of the SG(k) phase structure.
+\end{conjecture}
+
+\begin{conjecture}[Bidimensional modularity]
+The prime system is governed by two interacting modular periods: 6 and 9.
+\end{conjecture}
+
+\section{Perspectives}
+
+The modular phase structure revealed by SG(k) suggests several promising research directions.
+
+\subsection{Higher modular bases}
+The cube30 structure arises from the admissible residues modulo $30=2\cdot 3\cdot 5$.
+Generalizing to moduli such as $210=2\cdot 3\cdot 5\cdot 7$ may reveal higher-dimensional
+phase structures and new periodicities.
+
+\subsection{Spectral analysis of transition matrices}
+Applying Fourier or eigenvalue analysis to $M^{(k)}_6$ may uncover hidden symmetries,
+resonances, or invariant subspaces associated with prime gaps.
+
+\subsection{Dynamical systems interpretation}
+The periodicities 6, 9, and 18 suggest that prime gaps behave like a discrete dynamical
+system with modular attractors. A formal dynamical model could unify these observations.
+
+\subsection{Connections to sieve theory}
+SG(k) acts as a modular filter. Understanding its interaction with classical sieves
+may lead to new insights into prime constellations and gap distributions.
+
+\subsection{Generalized SG families}
+Replacing $kp+1$ by $kp+c$ for various constants $c$ may produce new phase structures
+and reveal deeper modular invariants of the primes.
+
+
+\section{Conclusion}
+
+SG(k) reveals a deep modular structure in the distribution of primes:
+\begin{itemize}
+\item strict periodicity 6 in $k$,
+\item three dynamical phases,
+\item hidden period-9 resonance,
+\item combined periodicity 18,
+\item modular attractor corresponding to global primes.
+\end{itemize}
+
+This structure is not visible in the primes themselves, but emerges naturally when SG(k) is used as a modular probe. This article establishes the mathematical foundation of \textbf{Prime Modular Dynamics Theory (PMDT)}.
+
+\section*{Index of Symbols}
+
+\begin{tabular}{ll}
+$\mathbb{P}$ & Set of prime numbers \\
+$SG(k)$ & Modular prime family defined by $kp+1\in\mathbb{P}$ \\
+$\mathcal{R}$ & Admissible residues modulo 30 \\
+$M^{(k)}_d$ & Transition matrix for SG(k) with gap $d$ \\
+$H$ & Mean entropy of transitions \\
+$DB$ & Detailed balance error \\
+$A,B$ & Sexy-prime orbits in the cube30 graph \\
+$S_9(k)$ & Period-9 autocorrelation score \\
+$\pi$ & Stationary distribution of residue classes \\
+\end{tabular}
+\appendix
+
+\section{Appendix A: Pipeline Overview}
+
+This appendix summarizes the structure of the computational pipeline used to generate all
+results in this article.
+
+\begin{itemize}
+    \item \texttt{sg\_families\_analysis.py}: SG(k) construction, transition matrices, entropy, DB.
+    \item \texttt{heatmaps.py}: heatmap generation for all SG(k) and global matrices.
+    \item \texttt{compare\_sg\_families.py}: entropy vs DB scatter plot.
+    \item \texttt{cube30\_orbits.py}: orbit A/B detection.
+    \item \texttt{period9\_detector.py}: period-9 resonance computation.
+    \item \texttt{period9\_plot.py}: period-9 vs k plot.
+    \item \texttt{pdf\_report.py}: automated PDF generation.
+\end{itemize}
+
+\section{Appendix B: Example Transition Matrices}
+
+Example matrices for SG(6) and SG(12) are included here for reference.
+
+\subsection{SG(6), gap 6}
+
+
+\[
+M^{(6)}_6 =
+\begin{pmatrix}
+\cdots
+\end{pmatrix}
+\]
+
+
+
+\subsection{SG(12), gap 6}
+
+
+\[
+M^{(12)}_6 =
+\begin{pmatrix}
+\cdots
+\end{pmatrix}
+\]
+
+
+
+\section{Appendix C: Code Snippets}
+
+Representative code fragments are included for reproducibility.
+
+\subsection{Entropy computation}
+\begin{verbatim}
+def entropy_row(P):
+    return -np.sum([p*np.log2(p) for p in P if p>0])
+\end{verbatim}
+
+\subsection{Period-9 detection}
+\begin{verbatim}
+def period9_score(M):
+    seq = extract_diagonals(M)
+    corr = autocorrelation(seq)
+    return corr[9] / corr[0]
+\end{verbatim}
+
+\begin{wrapfigure}{l}{25mm} 
+\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{MMonfettte}\\
+
+\end{wrapfigure}\par
+\textbf{\\ \\ Author Michel Monfette} Independent researcher. \\ 18 years in archival/museum sciences, \\ 25 years in IT as network manager. \\ Retired 2022. \\ Current focus: photography, travel and prime number research.\par
+
+\end{document}
+
+

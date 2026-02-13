@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Prime Modular Dynamics Theory (PMDT): SG(k), Modular Phases, and Periodicities 6, 9, and 18"
+authors:
+  - family-names: "Monfette"
+    given-names: "Michel"
+    # email: "ton.email@exemple.com"
+date-released: 2026-02-13
+version: "1.0.0"
+license: "MIT"
+type: software
+abstract: >
+  Prime Modular Dynamics Theory (PMDT) studies the modular dynamics of prime numbers
+  through the families SG(k) = { p in P : kp + 1 in P }. When projected onto the 8
+  admissible residues modulo 30, these families reveal a rich dynamical structure
+  underlying the global distribution of primes, including a strict periodicity 6 in k,
+  three modular phases, a hidden period-9 resonance, and a combined periodicity 18.
+repository-code: "https://github.com/USER/REPO"
+keywords:
+  - primes
+  - prime gaps
+  - modular arithmetic
+  - SG(k)
+  - cube30
+  - sexy primes
+  - entropy
+  - detailed balance
+  - period-9
+  - PMDT
+
